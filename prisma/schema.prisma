@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  image         String?
+  papers        Paper[]
+  folders       Folder[]
+  labels        Label[]
+  highlights    Highlight[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  sharedFolders SharedFolder[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Paper {
+  id              String         @id @default(cuid())
+  title           String
+  authors         String[]
+  abstract        String?        @db.Text
+  pdfUrl          String?
+  sourceUrl       String? // URL where paper was found
+  publicationDate DateTime?
+  aiSummary       String?        @db.Text
+  aiKeyFindings   String[] // Array of key findings
+  aiGaps          String[] // Array of research gaps
+  analyzedAt      DateTime? // When the AI analysis was last run
+  relatedPapers   String[] // Array of related paper IDs
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  folders         Folder[]
+  labels          Label[]
+  highlights      Highlight[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  isStarred       Boolean        @default(false)
+  sharedFolders   SharedFolder[]
+}
+
+model Folder {
+  id        String   @id @default(cuid())
+  name      String
+  papers    Paper[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Label {
+  id        String   @id @default(cuid())
+  name      String
+  color     String   @default("#808080")
+  papers    Paper[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Highlight {
+  id        String   @id @default(cuid())
+  text      String   @db.Text
+  color     String   @default("#ffeb3b")
+  page      Int
+  comment   String?  @db.Text
+  paper     Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  paperId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SharedFolder {
+  id        String   @id @default(cuid())
+  name      String
+  papers    Paper[]
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shareLink String?  @unique // For public sharing
+}
