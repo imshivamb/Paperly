@@ -2,10 +2,11 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
+import { RouteParams, IdParam } from "@/types/routes"
 
-
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -13,7 +14,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     const notes = await prisma.note.findMany({
       where: {
-        paperId: params.id,
+        paperId: resolvedParams.id,
         userId: session.user.id,
       },
       orderBy: {
@@ -28,8 +29,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -40,7 +42,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       data: {
         content: json.content,
         pageNumber: json.pageNumber,
-        paperId: params.id,
+        paperId: resolvedParams.id,
         userId: session.user.id,
       },
     })

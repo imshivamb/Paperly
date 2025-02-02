@@ -2,11 +2,13 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
+import { RouteParams, IdParam } from "@/types/routes"
 
 
 // Get a single paper
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -14,7 +16,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     const paper = await prisma.paper.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -31,8 +33,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // Update a paper
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -41,7 +44,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const json = await req.json()
     const paper = await prisma.paper.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -52,7 +55,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     const updatedPaper = await prisma.paper.update({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
       },
       data: json,
     })
@@ -65,8 +68,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 // Delete a paper
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -74,7 +78,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     const paper = await prisma.paper.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -85,7 +89,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     await prisma.paper.delete({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
       },
     })
 

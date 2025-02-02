@@ -2,10 +2,11 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
+import { RouteParams, IdParam } from "@/types/routes"
 
-
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -13,7 +14,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     const paper = await prisma.paper.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -38,7 +39,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     // Update paper's folders
     await prisma.paper.update({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
       },
       data: {
         folders: {

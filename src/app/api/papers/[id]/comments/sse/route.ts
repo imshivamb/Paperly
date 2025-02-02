@@ -2,10 +2,13 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { Comment } from "@prisma/client"
+import { RouteParams, IdParam } from "@/types/routes"
+
 
 const commentStreams = new Map<string, Set<(comment: Comment) => void>>()
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -17,20 +20,20 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         controller.enqueue("data: connected\n\n")
 
         // Add this client to paper's comment stream
-        const listeners = commentStreams.get(params.id) || new Set()
+        const listeners = commentStreams.get(resolvedParams.id) || new Set()
         const listener = (comment: Comment) => {
           controller.enqueue(`data: ${JSON.stringify(comment)}\n\n`)
         }
         listeners.add(listener)
-        commentStreams.set(params.id, listeners)
+        commentStreams.set(resolvedParams.id, listeners)
 
         // Cleanup on close
         req.signal.addEventListener("abort", () => {
-          const listeners = commentStreams.get(params.id)
+          const listeners = commentStreams.get(resolvedParams.id)
           if (listeners) {
             listeners.delete(listener)
             if (listeners.size === 0) {
-              commentStreams.delete(params.id)
+              commentStreams.delete(resolvedParams.id)
             }
           }
         })

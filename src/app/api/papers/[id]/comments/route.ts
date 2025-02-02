@@ -3,13 +3,14 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 import { Comment } from "@prisma/client"
-
+import { RouteParams, IdParam } from "@/types/routes"
 
 // Store comment streams for real-time updates
 const commentStreams = new Map<string, Set<(comment: Comment) => void>>()
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -17,7 +18,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     const comments = await prisma.comment.findMany({
       where: {
-        paperId: params.id,
+        paperId: resolvedParams.id,
       },
       orderBy: {
         createdAt: "desc",
@@ -40,8 +41,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -51,7 +53,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const comment = await prisma.comment.create({
       data: {
         content: json.content,
-        paperId: params.id,
+        paperId: resolvedParams.id,
         userId: session.user.id,
       },
       include: {
@@ -66,7 +68,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     })
 
     // Notify all connected clients about the new comment
-    const listeners = commentStreams.get(params.id)
+    const listeners = commentStreams.get(resolvedParams.id)
     if (listeners) {
       listeners.forEach(listener => listener(comment))
     }

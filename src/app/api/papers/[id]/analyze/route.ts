@@ -3,10 +3,11 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 import { analyzePaper } from "@/lib/openai"
+import { RouteParams, IdParam } from "@/types/routes"
 
-
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -22,7 +23,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     // Get the paper to verify ownership
     const paper = await prisma.paper.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -37,7 +38,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     // Update the paper with AI analysis
     const updatedPaper = await prisma.paper.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         aiSummary: summary,
         aiKeyFindings: keyFindings,

@@ -3,12 +3,16 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 
-
-export async function PATCH(req: Request, { params }: {params: {
+interface RouteParams {
+  params: Promise<{
     id: string
-    noteId: string}
-  }) {
+    noteId: string
+  }>
+}
+
+export async function PATCH(req: Request, { params }: RouteParams) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -16,8 +20,8 @@ export async function PATCH(req: Request, { params }: {params: {
 
     const note = await prisma.note.findFirst({
       where: {
-        id: params.noteId,
-        paperId: params.id,
+        id: resolvedParams.noteId,
+        paperId: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -29,7 +33,7 @@ export async function PATCH(req: Request, { params }: {params: {
     const json = await req.json()
     const updatedNote = await prisma.note.update({
       where: {
-        id: params.noteId,
+        id: resolvedParams.noteId,
       },
       data: {
         content: json.content,
@@ -44,11 +48,9 @@ export async function PATCH(req: Request, { params }: {params: {
   }
 }
 
-export async function DELETE(req: Request, { params }: {params: {
-  id: string
-  noteId: string}
-}) {
+export async function DELETE(req: Request, { params }: RouteParams) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -56,8 +58,8 @@ export async function DELETE(req: Request, { params }: {params: {
 
     const note = await prisma.note.findFirst({
       where: {
-        id: params.noteId,
-        paperId: params.id,
+        id: resolvedParams.noteId,
+        paperId: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -68,7 +70,7 @@ export async function DELETE(req: Request, { params }: {params: {
 
     await prisma.note.delete({
       where: {
-        id: params.noteId,
+        id: resolvedParams.noteId,
       },
     })
 
