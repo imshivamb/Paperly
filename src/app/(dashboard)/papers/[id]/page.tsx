@@ -12,10 +12,10 @@ import { PaperComments } from "@/components/share/paper-comments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label, Note, Paper, Highlight } from "@prisma/client";
 
+type Params = Promise<{ id: string }>;
+
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: Params;
 }
 
 // Extended Paper type to include AI analysis fields
@@ -32,10 +32,11 @@ interface ExtendedPaper extends Paper {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
+  const resolvedParams = await params;
   const session = await getServerSession(authOptions);
   const paper = await prisma.paper.findFirst({
     where: {
-      id: params.id,
+      id: resolvedParams.id,
       userId: session?.user?.id,
     },
   });
@@ -49,10 +50,11 @@ export async function generateMetadata({
 }
 
 export default async function PaperPage({ params }: PageProps) {
+  const resolvedParams = await params;
   const session = await getServerSession(authOptions);
   const paper = (await prisma.paper.findFirst({
     where: {
-      id: params.id,
+      id: resolvedParams.id,
       userId: session?.user?.id,
     },
     include: {
