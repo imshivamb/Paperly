@@ -72,25 +72,27 @@ export function PaperUploadForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
-        <Input
-          id="title"
-          name="title"
-          placeholder="Enter paper title"
-          required
-        />
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-8 px-3 w-full">
+      <div className="flex gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="title">Title</Label>
+          <Input
+            id="title"
+            name="title"
+            placeholder="Enter paper title"
+            required
+          />
+        </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="authors">Authors</Label>
-        <Input
-          id="authors"
-          name="authors"
-          placeholder="Enter authors (comma separated)"
-          required
-        />
+        <div className="space-y-2">
+          <Label htmlFor="authors">Authors</Label>
+          <Input
+            id="authors"
+            name="authors"
+            placeholder="Enter authors (comma separated)"
+            required
+          />
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -105,7 +107,12 @@ export function PaperUploadForm() {
 
       <div className="space-y-2">
         <Label htmlFor="publicationDate">Publication Date</Label>
-        <Input id="publicationDate" name="publicationDate" type="date" />
+        <Input
+          id="publicationDate"
+          name="publicationDate"
+          type="date"
+          className="flex justify-between w-full"
+        />
       </div>
 
       <div className="space-y-2">

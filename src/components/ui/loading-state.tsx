@@ -21,7 +21,7 @@ export function LoadingState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center p-8 text-muted-foreground",
+        "flex flex-col h-screen w-full items-center justify-center p-8 text-muted-foreground",
         className
       )}
     >

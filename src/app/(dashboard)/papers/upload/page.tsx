@@ -8,9 +8,9 @@ export const metadata: Metadata = {
 
 export default function UploadPage() {
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-full">
       <div className="space-y-6">
-        <div>
+        <div className="px-4">
           <h3 className="text-lg font-medium">Upload Paper</h3>
           <p className="text-sm text-muted-foreground">
             Upload a new research paper to your library
