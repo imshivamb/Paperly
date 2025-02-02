@@ -1,6 +1,6 @@
 "use client";
 
-import { OurFileRouter } from "@/lib/uploadthing";
+import { OurFileRouter } from "@/app/api/uploadthing/core";
 import { generateUploadDropzone } from "@uploadthing/react";
 
 const UploadDropzone = generateUploadDropzone<OurFileRouter>();
