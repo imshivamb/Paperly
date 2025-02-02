@@ -47,14 +47,16 @@ export class APIError extends Error {
     this.name = "APIError"
   }
 }
-
-export function catchErrors(handler: Function) {
-  return async (...args: any[]) => {
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+export function catchErrors<T extends any[], R>(
+  handler: (...args: T) => Promise<R> | R
+) {
+  return async (...args: T): Promise<R> => {
     try {
-      return await handler(...args)
+      return await handler(...args);
     } catch (error) {
-      handleError(error)
-      throw error
+      handleError(error);
+      throw error;
     }
-  }
+  };
 }

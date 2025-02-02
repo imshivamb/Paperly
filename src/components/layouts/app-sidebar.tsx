@@ -19,9 +19,7 @@ import { usePathname } from "next/navigation";
 import { FolderCreateDialog } from "@/components/folders/folder-create-dialog";
 import { LabelCreateDialog } from "@/components/labels/label-create-dialog";
 
-interface SideNavProps extends React.HTMLAttributes<HTMLElement> {}
-
-export function SideNav({ className }: SideNavProps) {
+export function SideNav({ className }: React.HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
   const [showFolders, setShowFolders] = useState(true);
   const [showLabels, setShowLabels] = useState(true);

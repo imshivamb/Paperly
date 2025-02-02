@@ -8,7 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import type { Folder as FolderType, Label, Paper } from "@prisma/client";
 import { Folder, Star } from "lucide-react";
 
@@ -25,7 +30,7 @@ export function DragAndDropPapers({
   folders,
   onPaperMoved,
 }: DragAndDropPapersProps) {
-  const handleDragEnd = async (result: any) => {
+  const handleDragEnd = async (result: DropResult) => {
     if (!result.destination || !result.draggableId) return;
 
     const paperId = result.draggableId;
