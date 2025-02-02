@@ -1,9 +1,7 @@
+import AuthProvider from "@/components/providers/auth-provider";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-import AuthProvider from "@/components/providers/auth-provider";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/layouts/app-sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,13 +19,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarTrigger />
-          <AuthProvider>{children}</AuthProvider>
-        </SidebarProvider>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

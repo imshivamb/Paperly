@@ -16,6 +16,8 @@ model User {
   folders       Folder[]
   labels        Label[]
   highlights    Highlight[]
+  notes         Note[]
+  comments      Comment[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   accounts      Account[]
@@ -68,10 +70,12 @@ model Paper {
   folders         Folder[]
   labels          Label[]
   highlights      Highlight[]
+  notes           Note[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   isStarred       Boolean        @default(false)
   sharedFolders   SharedFolder[]
+  comments        Comment[]
 }
 
 model Folder {
@@ -118,4 +122,27 @@ model SharedFolder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   shareLink String?  @unique // For public sharing
+}
+
+model Note {
+  id         String   @id @default(cuid())
+  content    String   @db.Text
+  pageNumber Int?
+  paper      Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  paperId    String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  paper     Paper    @relation(fields: [paperId], references: [id], onDelete: Cascade)
+  paperId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
