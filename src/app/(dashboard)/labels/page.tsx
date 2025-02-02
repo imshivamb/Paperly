@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { LabelsList } from "@/components/labels/labels-list";
-import { LabelCreateDialog } from "@/components/labels/label-create-dialog";
 
 export const metadata: Metadata = {
   title: "Labels | Paperly",
