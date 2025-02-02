@@ -4,13 +4,8 @@ import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 import { nanoid } from 'nanoid'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
 
-export async function POST(req: Request, { params }: RouteParams) {
+export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {

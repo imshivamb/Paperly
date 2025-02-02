@@ -3,13 +3,8 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { Comment } from "@prisma/client"
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
 const commentStreams = new Map<string, Set<(comment: Comment) => void>>()
-export async function GET(req: Request, { params }: RouteParams) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {

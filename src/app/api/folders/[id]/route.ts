@@ -3,13 +3,10 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
-export async function GET(req: Request, { params }: RouteParams) {
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -42,7 +39,10 @@ export async function GET(req: Request, { params }: RouteParams) {
   }
 }
 
-export async function PATCH(req: Request, { params }: RouteParams) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -77,7 +77,10 @@ export async function PATCH(req: Request, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(req: Request, { params }: RouteParams) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {

@@ -7,13 +7,9 @@ import { nanoid } from "nanoid"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
 
-export async function POST(req: Request, { params }: RouteParams) {
+
+export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
