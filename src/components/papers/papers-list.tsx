@@ -22,32 +22,51 @@ import { Download, MoreHorizontal, Star } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-interface Paper {
+interface PaperLabel {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface PaperListItem {
   id: string;
   title: string;
   authors: string[];
   publicationDate: string | null;
   pdfUrl: string | null;
   isStarred: boolean;
-  labels: {
-    id: string;
-    name: string;
-    color: string;
-  }[];
+  labels: PaperLabel[];
 }
 
-export function PapersList() {
+interface PapersListProps {
+  papers?: PaperListItem[];
+  isShared?: boolean;
+}
+
+export function PapersList({
+  papers: initialPapers,
+  isShared = false,
+}: PapersListProps) {
   const searchParams = useSearchParams();
-  const [papers, setPapers] = React.useState<Paper[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  const [papers, setPapers] = React.useState<PaperListItem[]>(
+    initialPapers || []
+  );
+  const [loading, setLoading] = React.useState(!initialPapers);
 
   React.useEffect(() => {
+    if (initialPapers) {
+      setPapers(initialPapers);
+      return;
+    }
+
     const fetchPapers = async () => {
       setLoading(true);
       try {
         const query = searchParams.get("query");
         const response = await fetch(
-          `/api/papers${query ? `?query=${query}` : ""}`
+          `/api/papers${query ? `?query=${query}` : ""}${
+            isShared ? "?shared=true" : ""
+          }`
         );
         if (!response.ok) throw new Error("Failed to fetch papers");
         const data = await response.json();
@@ -60,7 +79,7 @@ export function PapersList() {
     };
 
     fetchPapers();
-  }, [searchParams]);
+  }, [searchParams, isShared, initialPapers]);
 
   const toggleStar = async (paperId: string) => {
     try {

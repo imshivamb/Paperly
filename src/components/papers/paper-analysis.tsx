@@ -13,7 +13,12 @@ import { Loader2, Sparkles } from "lucide-react";
 import { Paper } from "@prisma/client";
 
 interface PaperAnalysisProps {
-  paper: Paper;
+  paper: Paper & {
+    aiSummary: string | null;
+    aiKeyFindings: string[];
+    aiGaps: string[];
+    analyzedAt: Date | null;
+  };
   pdfText?: string;
 }
 

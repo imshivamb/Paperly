@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
+import { useState, useEffect } from "react";
+import { Document, Page } from "react-pdf";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
-
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+import "@/lib/pdf-config";
+import { LoadingState } from "../ui/loading-state";
 
 interface PaperViewerProps {
   pdfUrl: string;
@@ -18,9 +17,15 @@ export function PaperViewer({ pdfUrl }: PaperViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
+    console.log("PDF loaded successfully with", numPages, "pages");
   }
 
   function changePage(offset: number) {
@@ -35,6 +40,14 @@ export function PaperViewer({ pdfUrl }: PaperViewerProps) {
       const newScale = prevScale + delta;
       return Math.min(Math.max(0.5, newScale), 2.0);
     });
+  }
+
+  if (!isClient) {
+    return (
+      <div className="flex items-center justify-center min-h-[500px]">
+        Loading viewer...
+      </div>
+    );
   }
 
   return (
@@ -91,7 +104,7 @@ export function PaperViewer({ pdfUrl }: PaperViewerProps) {
             </div>
           }
           error={
-            <div className="flex items-center justify-center min-h-[500px]">
+            <div className="flex items-center justify-center min-h-[500px] text-destructive">
               Failed to load PDF. Please try again later.
             </div>
           }
@@ -101,7 +114,7 @@ export function PaperViewer({ pdfUrl }: PaperViewerProps) {
             scale={scale}
             loading={
               <div className="flex items-center justify-center min-h-[500px]">
-                Loading page...
+                <LoadingState />
               </div>
             }
           />

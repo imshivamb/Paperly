@@ -54,8 +54,8 @@ export function FolderCreateDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm">
-          <FolderPlus className="h-4 w-4 mr-2" />
-          New Folder
+          <FolderPlus className="h-4 w-4 mr-1" />
+          Create
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

@@ -1,26 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
+import { LoginForm } from "@/components/auth/login-form";
 
 export default function LoginPage() {
   return (
-    <div className="flex h-screen w-screen items-center justify-center">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-        <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Welcome to Paperly
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Sign in to manage your research papers
-          </p>
-        </div>
-        <Button
-          onClick={() => signIn("google", { callbackUrl: "/papers" })}
-          variant="outline"
-        >
-          Continue with Google
-        </Button>
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <LoginForm />
       </div>
     </div>
   );

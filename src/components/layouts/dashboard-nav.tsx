@@ -5,13 +5,15 @@ import { MobileNav } from "./mobile-nav";
 export function DashboardNav() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
+      <div className="container mx-auto w-full flex h-14 items-center">
         <MobileNav />
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <span className="font-bold">Paperly</span>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+        </div>
+        <div>
+          <nav className="md:flex hidden items-center space-x-6 ml-12 text-sm font-medium">
             <Link
               href="/papers"
               className="transition-colors hover:text-foreground/80"
