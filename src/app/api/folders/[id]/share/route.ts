@@ -3,12 +3,9 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 import { nanoid } from 'nanoid'
+import { RouteParams, IdParam } from '@/types/routes'
 
-interface RouteParams {
-  params: Promise<{ id: string }>
-}
-
-export async function POST(req: Request, { params }: RouteParams) {
+export async function POST(req: Request, { params }: RouteParams<IdParam>) {
   try {
     const resolvedParams = await params
     const session = await getServerSession(authOptions)
@@ -21,6 +18,13 @@ export async function POST(req: Request, { params }: RouteParams) {
         id: resolvedParams.id,
         userId: session.user.id,
       },
+      include: {
+        papers: {
+          select: {
+            id: true
+          }
+        }
+      }
     })
 
     if (!folder) {
