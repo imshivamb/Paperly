@@ -94,7 +94,7 @@ export default async function PaperPage({ params }: PageProps) {
 
             <div className="flex-1 overflow-auto">
               <TabsContent value="highlights" className="m-0 p-0 h-full">
-                <HighlightsPanel paperId={params.id} />
+                <HighlightsPanel paperId={resolvedParams.id} />
               </TabsContent>
 
               <TabsContent value="analysis" className="m-0 p-4">
@@ -102,11 +102,11 @@ export default async function PaperPage({ params }: PageProps) {
               </TabsContent>
 
               <TabsContent value="notes" className="m-0 p-4">
-                <PaperNotes paperId={params.id} currentPage={1} />
+                <PaperNotes paperId={resolvedParams.id} currentPage={1} />
               </TabsContent>
 
               <TabsContent value="comments" className="m-0 p-4">
-                <PaperComments paperId={params.id} />
+                <PaperComments paperId={resolvedParams.id} />
               </TabsContent>
             </div>
           </Tabs>
