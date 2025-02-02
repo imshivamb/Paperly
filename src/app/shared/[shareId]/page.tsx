@@ -11,9 +11,9 @@ import {
 import { Folder } from "lucide-react";
 
 interface SharedFolderPageProps {
-  params: {
+  params: Promise<{
     shareId: string;
-  };
+  }>;
 }
 
 async function getSharedFolder(shareId: string) {
@@ -40,7 +40,8 @@ async function getSharedFolder(shareId: string) {
 }
 
 export async function generateMetadata({ params }: SharedFolderPageProps) {
-  const folder = await getSharedFolder(params.shareId);
+  const resolvedParams = await params;
+  const folder = await getSharedFolder(resolvedParams.shareId);
   if (!folder) return { title: "Not Found" };
 
   return {
@@ -52,7 +53,8 @@ export async function generateMetadata({ params }: SharedFolderPageProps) {
 export default async function SharedFolderPage({
   params,
 }: SharedFolderPageProps) {
-  const folder = await getSharedFolder(params.shareId);
+  const resolvedParams = await params;
+  const folder = await getSharedFolder(resolvedParams.shareId);
   if (!folder) notFound();
 
   return (
