@@ -20,7 +20,7 @@ import { Folder, Loader2, MoreHorizontal, Edit, Trash } from "lucide-react";
 import { FolderCreateDialog } from "./folder-create-dialog";
 import { Paper } from "@/types";
 
-interface FolderType {
+export interface FolderType {
   id: string;
   name: string;
   createdAt: string;
