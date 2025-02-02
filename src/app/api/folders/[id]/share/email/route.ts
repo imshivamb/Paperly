@@ -4,10 +4,9 @@ import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 import { Resend } from 'resend'
 import { nanoid } from "nanoid"
-import {RouteParams, IdParam } from '@/types/routes'
+import { RouteParams, IdParam } from '@/types/routes'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
-
 
 export async function POST(req: Request, { params }: RouteParams<IdParam>) {
   try {
@@ -27,6 +26,13 @@ export async function POST(req: Request, { params }: RouteParams<IdParam>) {
         id: resolvedParams.id,
         userId: session.user.id,
       },
+      include: {
+        papers: {
+          select: {
+            id: true
+          }
+        }
+      }
     })
 
     if (!folder) {
