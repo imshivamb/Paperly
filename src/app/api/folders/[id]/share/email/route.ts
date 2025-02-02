@@ -4,13 +4,14 @@ import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 import { Resend } from 'resend'
 import { nanoid } from "nanoid"
+import {RouteParams, IdParam } from '@/types/routes'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 
-
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: RouteParams<IdParam>) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -23,7 +24,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     const folder = await prisma.folder.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })

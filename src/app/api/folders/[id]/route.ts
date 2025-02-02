@@ -3,11 +3,13 @@ import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
 import { authOptions } from "@/lib/auth"
 
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+interface RouteParams {
+  params: Promise<{ id: string }>
+}
+
+export async function GET(req: Request, { params }: RouteParams) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -15,7 +17,7 @@ export async function GET(
 
     const folder = await prisma.folder.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
       include: {
@@ -39,11 +41,9 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: Request, { params }: RouteParams) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -51,7 +51,7 @@ export async function PATCH(
 
     const folder = await prisma.folder.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -63,7 +63,7 @@ export async function PATCH(
     const json = await req.json()
     const updatedFolder = await prisma.folder.update({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
       },
       data: {
         name: json.name,
@@ -77,11 +77,9 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: Request, { params }: RouteParams) {
   try {
+    const resolvedParams = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 })
@@ -89,7 +87,7 @@ export async function DELETE(
 
     const folder = await prisma.folder.findFirst({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
         userId: session.user.id,
       },
     })
@@ -100,7 +98,7 @@ export async function DELETE(
 
     await prisma.folder.delete({
       where: {
-        id: params.id,
+        id: resolvedParams.id,
       },
     })
 
