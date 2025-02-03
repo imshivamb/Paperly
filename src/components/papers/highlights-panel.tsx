@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HighlightComments } from "./highlight-comments";
 import type { Highlight } from "@prisma/client";
+import { LoadingState } from "../ui/loading-state";
 
 interface HighlightsPanelProps {
   paperId: string;
@@ -65,7 +66,12 @@ export function HighlightsPanel({
     return acc;
   }, {} as Record<string, Highlight[]>);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div>
+        <LoadingState />
+      </div>
+    );
 
   return (
     <Card>

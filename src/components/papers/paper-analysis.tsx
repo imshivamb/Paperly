@@ -19,7 +19,7 @@ interface PaperAnalysisProps {
     aiGaps: string[];
     analyzedAt: Date | null;
   };
-  pdfText?: string;
+  pdfText?: string | null;
 }
 
 interface Analysis {
@@ -120,7 +120,7 @@ export function PaperAnalysis({ paper, pdfText }: PaperAnalysisProps) {
             : "Never"}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 max-h-[calc(100vh-350px)] overflow-auto">
         <div className="space-y-2">
           <h3 className="font-semibold">Summary</h3>
           <div className="text-sm text-muted-foreground">

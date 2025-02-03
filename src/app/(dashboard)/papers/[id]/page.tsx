@@ -1,32 +1,21 @@
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { prisma } from "@/lib/db";
-import { authOptions } from "@/lib/auth";
-import { PaperDetailHeader } from "@/components/papers/paper-detail-header";
-import { PaperViewer } from "@/components/papers/paper-viewer";
-import { PaperAnalysis } from "@/components/papers/paper-analysis";
-import { PaperNotes } from "@/components/papers/paper-notes";
 import { HighlightsPanel } from "@/components/papers/highlights-panel";
+import { PaperDetailHeader } from "@/components/papers/paper-detail-header";
+import { PaperNotes } from "@/components/papers/paper-notes";
+import { PaperViewer } from "@/components/papers/paper-viewer";
+import { PDFAnalysis } from "@/components/papers/pdf-analysis";
 import { PaperComments } from "@/components/share/paper-comments";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label, Note, Paper, Highlight } from "@prisma/client";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { ExtendedPaper } from "@/types/paper";
+import { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { notFound } from "next/navigation";
 
 type Params = Promise<{ id: string }>;
 
 interface PageProps {
   params: Params;
-}
-
-// Extended Paper type to include AI analysis fields
-interface ExtendedPaper extends Paper {
-  labels: Label[];
-  highlights: Highlight[];
-  notes: Note[];
-  aiSummary: string | null;
-  aiKeyFindings: string[];
-  aiGaps: string[];
-  analyzedAt: Date | null;
 }
 
 export async function generateMetadata({
@@ -76,9 +65,9 @@ export default async function PaperPage({ params }: PageProps) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 container grid grid-cols-[1fr,400px] gap-6 py-6 overflow-hidden">
+      <div className="flex-1 container grid grid-cols-[1fr,400px] gap-6 py-6">
         {/* Left Side - PDF Viewer */}
-        <div className="flex flex-col overflow-hidden rounded-lg border bg-card">
+        <div className="flex flex-col overflow-hidden rounded-lg border bg-card pt-2">
           <PaperViewer pdfUrl={paper.pdfUrl || ""} />
         </div>
 
@@ -98,7 +87,7 @@ export default async function PaperPage({ params }: PageProps) {
               </TabsContent>
 
               <TabsContent value="analysis" className="m-0 p-4">
-                <PaperAnalysis paper={paper} />
+                <PDFAnalysis paper={paper} />
               </TabsContent>
 
               <TabsContent value="notes" className="m-0 p-4">

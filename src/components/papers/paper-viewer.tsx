@@ -94,13 +94,13 @@ export function PaperViewer({ pdfUrl }: PaperViewerProps) {
         </Button>
       </div>
 
-      <div className="max-h-[calc(100vh-300px)] overflow-auto border rounded-lg p-4">
+      <div className="max-h-[calc(100vh-300px)] overflow-auto border rounded-lg p-4 w-full">
         <Document
           file={pdfUrl}
           onLoadSuccess={onDocumentLoadSuccess}
           loading={
             <div className="flex items-center justify-center min-h-[500px]">
-              Loading PDF...
+              <LoadingState />
             </div>
           }
           error={
