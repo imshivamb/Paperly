@@ -37,12 +37,10 @@ export async function analyzePaper(text: string): Promise<Analysis> {
         ],
         temperature: 0.2,
       });
-      
-      // Extract only the JSON part from the response
+
       const rawContent = response.choices[0].message.content?.trim() || "";
       const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
 
-      // Ensure jsonMatch is not null before parsing
       const jsonText = jsonMatch ? jsonMatch[0] : "{}";
 
       const result = JSON.parse(jsonText);

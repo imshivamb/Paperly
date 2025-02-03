@@ -18,9 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Download, MoreHorizontal, Star } from "lucide-react";
+import { Download, Folder, MoreHorizontal, Star } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { FolderSelectDialog } from "../folders/folder-select-dialog";
 
 interface PaperLabel {
   id: string;
@@ -36,6 +37,7 @@ export interface PaperListItem {
   pdfUrl: string | null;
   isStarred: boolean;
   labels: PaperLabel[];
+  folders?: { id: string; name: string }[];
 }
 
 interface PapersListProps {
@@ -52,6 +54,7 @@ export function PapersList({
     initialPapers || []
   );
   const [loading, setLoading] = React.useState(!initialPapers);
+  const [folderDialogOpen, setFolderDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (initialPapers) {
@@ -103,6 +106,24 @@ export function PapersList({
       );
     } catch (error) {
       console.error("Error updating paper:", error);
+    }
+  };
+  const deletePaper = async (paperId: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this paper?"
+    );
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/api/papers/${paperId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete paper");
+
+      setPapers(papers.filter((p) => p.id !== paperId));
+    } catch (error) {
+      console.error("Error deleting paper:", error);
     }
   };
 
@@ -205,16 +226,24 @@ export function PapersList({
                       </a>
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem onClick={() => setFolderDialogOpen(true)}>
+                    <Folder className="mr-2 h-4 w-4" />
+                    Add to Folder
+                  </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => {
-                      // Handle delete - implement later
-                    }}
+                    onClick={() => deletePaper(paper.id)}
                     className="text-red-600"
                   >
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              <FolderSelectDialog
+                open={folderDialogOpen}
+                onOpenChange={setFolderDialogOpen}
+                paperId={paper.id}
+                currentFolders={paper.folders?.map((f) => f.id) || []}
+              />
             </TableCell>
           </TableRow>
         ))}
